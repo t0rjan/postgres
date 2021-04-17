@@ -1,2 +1,7 @@
 /13/data/*/
-!/13/data/post
+/13/data/pg_hba.conf
+/13/data/pg_ident.conf
+/13/data/PG_VERSION
+/13/data/postgresql.auto.conf
+/13/data/postmaster.opts
+/13/data/postmaster.pid
