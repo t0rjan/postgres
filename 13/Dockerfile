@@ -1,5 +1,8 @@
 # vim:set ft=dockerfile:
 FROM debian:buster-slim
+RUN cat /etc/apt/sources.list
+RUN mv /etc/apt/sources.list /etc/apt/sources.list.bak
+COPY ./sources.list /etc/apt/sources.list
 
 RUN set -ex; \
 	if ! command -v gpg > /dev/null; then \
@@ -94,20 +97,20 @@ RUN set -ex; \
 	case "$dpkgArch" in \
 		amd64 | arm64 | i386 | ppc64el) \
 # arches officialy built by upstream
-			echo "deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main $PG_MAJOR" > /etc/apt/sources.list.d/pgdg.list; \
+			echo "deb http://mirrors.tuna.tsinghua.edu.cn/postgresql/repos/apt/ buster-pgdg main $PG_MAJOR" > /etc/apt/sources.list.d/pgdg.list; \
 			apt-get update; \
 			;; \
 		*) \
 # we're on an architecture upstream doesn't officially build for
 # let's build binaries from their published source packages
-			echo "deb-src http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main $PG_MAJOR" > /etc/apt/sources.list.d/pgdg.list; \
+			echo "deb-src http://mirrors.tuna.tsinghua.edu.cn/postgresql/repos/apt/ buster-pgdg main $PG_MAJOR" > /etc/apt/sources.list.d/pgdg.list; \
 			\
 			case "$PG_MAJOR" in \
 				9.* | 10 ) ;; \
 				*) \
 # https://github.com/docker-library/postgres/issues/484 (clang-6.0 required, only available in stretch-backports)
 # TODO remove this once we hit buster+
-					echo 'deb http://deb.debian.org/debian buster-backports main' >> /etc/apt/sources.list.d/pgdg.list; \
+#					echo 'deb http://deb.debian.org/debian buster-backports main' >> /etc/apt/sources.list.d/pgdg.list; \
 					;; \
 			esac; \
 			\
@@ -175,6 +178,8 @@ RUN set -eux; \
 	grep -F "listen_addresses = '*'" /usr/share/postgresql/postgresql.conf.sample
 
 RUN mkdir -p /var/run/postgresql && chown -R postgres:postgres /var/run/postgresql && chmod 2777 /var/run/postgresql
+
+RUN apt-get update && apt-get install postgresql-13-pldebugger -y
 
 ENV PATH $PATH:/usr/lib/postgresql/$PG_MAJOR/bin
 ENV PGDATA /var/lib/postgresql/data

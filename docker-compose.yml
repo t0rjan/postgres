@@ -1,0 +1,35 @@
+version: '2'
+services:
+  pg:
+    build: ./13
+    ports:
+      - 5432:5432
+    volumes:
+      - ./13/data:/var/lib/postgresql/data
+    #      - /Users/lesliewong/Documents/Github/dockers/postgres/13/pldebugger:/opt/pldebugger
+    environment:
+      - POSTGRES_PASSWORD=fuckfuckfuck
+    networks:
+      - pg
+    restart: always
+
+  pg-postgraphile:
+    image: graphile/postgraphile
+    ports:
+      - 5000:5000
+    command: --enhance-graphiql --connection postgres://postgres:fuckfuckfuck@pg:5432/zhst --watch
+    depends_on:
+      - pg
+#    environment:
+#      - POSTGRES_USER=postgres
+#      - POSTGRES_PASSWORD=fuckfuckfuck
+#      - POSTGRES_HOST=pg
+#      - POSTGRES_PORT=5432
+#      - POSTGRES_DATABASE=zhst
+    networks:
+      - pg
+    restart: always
+
+networks:
+  pg:
+    driver: bridge
