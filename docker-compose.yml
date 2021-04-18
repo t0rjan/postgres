@@ -9,23 +9,36 @@ services:
     #      - /Users/lesliewong/Documents/Github/dockers/postgres/13/pldebugger:/opt/pldebugger
     environment:
       - POSTGRES_PASSWORD=fuckfuckfuck
+      - TZ=Asia/Shanghai
     networks:
       - pg
     restart: always
 
-  pg-postgraphile:
-    image: graphile/postgraphile
+  #  pg-postgraphile:
+  #    image: graphile/postgraphile
+  #    ports:
+  #      - 5000:5000
+  #    command: --enhance-graphiql --dynamic-json --connection postgres://postgres:fuckfuckfuck@pg:5432/zhst --watch
+  #    depends_on:
+  #      - pg
+  ##    environment:
+  ##      - POSTGRES_USER=postgres
+  ##      - POSTGRES_PASSWORD=fuckfuckfuck
+  ##      - POSTGRES_HOST=pg
+  ##      - POSTGRES_PORT=5432
+  ##      - POSTGRES_DATABASE=zhst
+  #    networks:
+  #      - pg
+  #    restart: always
+  pg-admin:
+    image: dpage/pgadmin4
     ports:
-      - 5000:5000
-    command: --enhance-graphiql --connection postgres://postgres:fuckfuckfuck@pg:5432/zhst --watch
+      - 5000:80
     depends_on:
       - pg
-#    environment:
-#      - POSTGRES_USER=postgres
-#      - POSTGRES_PASSWORD=fuckfuckfuck
-#      - POSTGRES_HOST=pg
-#      - POSTGRES_PORT=5432
-#      - POSTGRES_DATABASE=zhst
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=99999r00t@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=qqqqqq
     networks:
       - pg
     restart: always
